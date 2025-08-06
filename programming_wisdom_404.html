@@ -385,13 +385,8 @@
         }
 
         function goHome() {
-            // Simulate navigation
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                alert('Redirecting to home page...\n\n(In a real application, this would navigate to your homepage)');
-                
-                document.body.style.opacity = '1';
-            }, 300);
+            // Navigate to homepage
+            window.location.href = 'https://www.xiebaiyuan.top';
         }
 
         function showStackTrace() {
