@@ -554,6 +554,9 @@
             // Update current wisdom quote
             newWisdom();
             
+            // Restart Matrix effect with new character set
+            restartMatrix();
+            
             // Save language preference
             localStorage.setItem('preferred-language', lang);
         }
@@ -593,7 +596,13 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>+-*/%=;:.,!?@#$^&|~`';
+            // Different character sets based on language
+            const charSets = {
+                en: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>+-*/%=;:.,!?@#$^&|~`',
+                zh: '代码程序员前端后端全栈开发调试测试产品运维架构数据库缓存网络协议算法设计模式重构优化性能监控日志异常错误修复部署上线发布版本迭代需求文档注释变量函数类对象数组字符串布尔值整数浮点数条件循环分支判断逻辑运算符赋值比较关系操作系统内存CPU硬盘网卡显卡主板电源风扇机箱键盘鼠标显示器音响耳机麦克风摄像头打印机扫描仪路由器交换机防火墙服务器云计算大数据人工智能机器学习深度学习神经网络算法模型训练预测分类回归聚类降维特征工程数据清洗可视化统计分析挖掘仓库ETL报表仪表板'
+            };
+            
+            const chars = charSets[currentLanguage] || charSets.en;
             const charArray = chars.split('');
             
             const fontSize = 14;
@@ -622,12 +631,17 @@
                 }
             }
             
-            setInterval(draw, 100);
+            matrixInterval = setInterval(draw, 100);
         }
 
         // Floating icons
         function createFloatingIcon() {
-            const icons = ['{}', '[]', '()', '<>', '++', '--', '=>', '==', '!=', '&&', '||', '??'];
+            const iconSets = {
+                en: ['{}', '[]', '()', '<>', '++', '--', '=>', '==', '!=', '&&', '||', '??'],
+                zh: ['代码', '程序', '调试', 'Bug', '修复', '部署', '上线', '重构', '优化', '测试', '需求', '文档']
+            };
+            
+            const icons = iconSets[currentLanguage] || iconSets.en;
             const container = document.querySelector('.floating-icons');
             const icon = document.createElement('div');
             
@@ -642,6 +656,23 @@
             setTimeout(() => {
                 icon.remove();
             }, 25000);
+        }
+
+        // Restart Matrix effect with new character set
+        let matrixInterval;
+        function restartMatrix() {
+            if (matrixInterval) {
+                clearInterval(matrixInterval);
+            }
+            
+            const canvas = document.querySelector('.matrix-bg');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Restart with new character set
+            initMatrix();
         }
 
         // Initialize effects
