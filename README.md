@@ -28,7 +28,7 @@
 
 ## 🎯 在线演示
 
-[Live Demo](https://xiebaiyuan.github.io/404) （替换为您的实际URL）
+[Live Demo](https://xiebaiyuan.github.io/404/) - 在线体验完整功能
 
 ## 📸 截图
 

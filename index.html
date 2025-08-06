@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming Wisdom 404</title>
+    <script>
+        // 立即重定向到主页面
+        window.location.replace('./programming_wisdom_404.html');
+    </script>
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: #0c0c0c;
+            color: #4ecdc4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .loading {
+            text-align: center;
+        }
+        .spinner {
+            border: 2px solid #1a1a2e;
+            border-top: 2px solid #4ecdc4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading Programming Wisdom...</p>
+        <p><a href="./programming_wisdom_404.html" style="color: #4ecdc4;">Click here if not redirected</a></p>
+    </div>
+</body>
+</html>
