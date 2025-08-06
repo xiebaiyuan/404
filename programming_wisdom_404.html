@@ -5,6 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404: Wisdom Not Found</title>
     <style>
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid rgba(78, 205, 196, 0.5);
+            color: #4ecdc4;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .lang-btn:hover {
+            background: rgba(78, 205, 196, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .lang-btn.active {
+            background: #4ecdc4;
+            color: #000;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -291,9 +321,14 @@
     <canvas class="matrix-bg"></canvas>
     <div class="floating-icons"></div>
 
+    <div class="language-switcher">
+        <button class="lang-btn active" onclick="switchLanguage('en')">EN</button>
+        <button class="lang-btn" onclick="switchLanguage('zh')">中文</button>
+    </div>
+
     <div class="container">
         <div class="glitch error-code" data-text="404">404</div>
-        <h1 class="title">Wisdom Not Found<span class="terminal-cursor"></span></h1>
+        <h1 class="title" data-en="Wisdom Not Found" data-zh="智慧未找到">Wisdom Not Found<span class="terminal-cursor"></span></h1>
         
         <div class="wisdom-container">
             <div class="wisdom-quote" id="wisdomQuote">
@@ -305,7 +340,7 @@
         </div>
 
         <div class="code-snippet">
-<pre><code>function findPage(url) {
+<pre><code id="codeSnippet">function findPage(url) {
     try {
         return database.query(url);
     } catch (PageNotFound) {
@@ -318,58 +353,214 @@
         </div>
 
         <div class="button-container">
-            <button class="btn" onclick="newWisdom()">Generate New Wisdom</button>
-            <a href="#" class="btn" onclick="goHome()">Return Home</a>
-            <button class="btn" onclick="showStackTrace()">View Stack Trace</button>
+            <button class="btn" onclick="newWisdom()" data-en="Generate New Wisdom" data-zh="生成新智慧">Generate New Wisdom</button>
+            <a href="#" class="btn" onclick="goHome()" data-en="Return Home" data-zh="返回首页">Return Home</a>
+            <button class="btn" onclick="showStackTrace()" data-en="View Stack Trace" data-zh="查看堆栈跟踪">View Stack Trace</button>
         </div>
     </div>
 
     <script>
-        const wisdomQuotes = [
-            {
-                quote: "The best error message is the one that never shows up.",
-                author: "Thomas Fuchs"
+        // Language data
+        let currentLanguage = 'en';
+        
+        const codeSnippets = {
+            en: `function findPage(url) {
+    try {
+        return database.query(url);
+    } catch (PageNotFound) {
+        // TODO: Implement proper 404 handling
+        // "There are two hard things in computer science:
+        //  cache invalidation, naming things, and off-by-one errors."
+        return showWisdom();
+    }
+}`,
+            zh: `function findPage(url) {
+    try {
+        return database.query(url);
+    } catch (PageNotFound) {
+        // TODO: 实现正经的404处理（又是TODO）
+        // "编程有三大难题：缓存失效、命名困难、还有数不清的Bug"
+        return showWisdom(); // 算了，还是看看鸡汤吧
+    }
+}`
+        };
+        
+        const wisdomQuotes = {
+            en: [
+                {
+                    quote: "The best error message is the one that never shows up.",
+                    author: "Thomas Fuchs"
+                },
+                {
+                    quote: "Code is like humor. When you have to explain it, it's bad.",
+                    author: "Cory House"
+                },
+                {
+                    quote: "There are two hard things in computer science: cache invalidation, naming things, and off-by-one errors.",
+                    author: "Phil Karlton (extended)"
+                },
+                {
+                    quote: "Premature optimization is the root of all evil.",
+                    author: "Donald Knuth"
+                },
+                {
+                    quote: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+                    author: "Martin Fowler"
+                },
+                {
+                    quote: "First, solve the problem. Then, write the code.",
+                    author: "John Johnson"
+                },
+                {
+                    quote: "The most disastrous thing that you can ever learn is your first programming language.",
+                    author: "Alan Kay"
+                },
+                {
+                    quote: "Debugging is twice as hard as writing the code in the first place.",
+                    author: "Brian Kernighan"
+                },
+                {
+                    quote: "Code never lies, comments sometimes do.",
+                    author: "Ron Jeffries"
+                },
+                {
+                    quote: "Programs must be written for people to read, and only incidentally for machines to execute.",
+                    author: "Harold Abelson"
+                }
+            ],
+            zh: [
+                {
+                    quote: "最好的报错信息，就是永远不会出现的那个。",
+                    author: "Thomas Fuchs"
+                },
+                {
+                    quote: "代码如段子，一解释就不好笑了。",
+                    author: "Cory House"
+                },
+                {
+                    quote: "编程有三大难题：缓存失效、命名困难、还有数不清的Bug。",
+                    author: "Phil Karlton（程序员版）"
+                },
+                {
+                    quote: "过早优化是万恶之源，但deadline是万能之母。",
+                    author: "Donald Knuth（加强版）"
+                },
+                {
+                    quote: "写出机器能懂的代码很简单，写出人能懂的代码才是大师。",
+                    author: "Martin Fowler"
+                },
+                {
+                    quote: "遇事不决，先Google。Google不行，问ChatGPT。",
+                    author: "现代程序员守则"
+                },
+                {
+                    quote: "学会第一门编程语言后，你会发现：原来还有这么多不会的。",
+                    author: "Alan Kay（扎心版）"
+                },
+                {
+                    quote: "写代码5分钟，调试2小时，这就是程序员的日常。",
+                    author: "Brian Kernighan（真实版）"
+                },
+                {
+                    quote: "代码不会撒谎，但注释经常吹牛。",
+                    author: "Ron Jeffries"
+                },
+                {
+                    quote: "能跑就行，别问为什么。能用就好，别管性能。",
+                    author: "佛系程序员语录"
+                },
+                {
+                    quote: "今天的bug是明天的feature，明天的feature是后天的bug。",
+                    author: "产品迭代真理"
+                },
+                {
+                    quote: "世界上最遥远的距离，是我写的代码和我以为的逻辑之间的距离。",
+                    author: "程序员心声"
+                }
+            ]
+        };
+
+        const alertMessages = {
+            en: {
+                redirecting: 'Redirecting to home page...\n\n(In a real application, this would navigate to your homepage)',
+                stackTrace: `Error: Page not found (404)
+    at Router.handleRequest (/app/router.js:42:15)
+    at Server.processRequest (/app/server.js:128:23)
+    at IncomingMessage.<anonymous> (/app/server.js:89:12)
+    at IncomingMessage.emit (events.js:223:5)
+    at HTTPParser.parserOnIncomingClient (_http_client.js:456:21)
+    at HTTPParser.parserOnHeadersComplete (_http_common.js:130:17)
+    at Socket.socketOnData (_http_client.js:362:20)
+    at Socket.emit (events.js:223:5)
+    at addChunk (_stream_readable.js:309:12)
+    at readableAddChunk (_stream_readable.js:290:11)
+
+💡 Pro tip: This error occurred because you tried to access a page that doesn't exist.
+   Consider implementing proper route handling and user-friendly redirects!`
             },
-            {
-                quote: "Code is like humor. When you have to explain it, it's bad.",
-                author: "Cory House"
-            },
-            {
-                quote: "There are two hard things in computer science: cache invalidation, naming things, and off-by-one errors.",
-                author: "Phil Karlton (extended)"
-            },
-            {
-                quote: "Premature optimization is the root of all evil.",
-                author: "Donald Knuth"
-            },
-            {
-                quote: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
-                author: "Martin Fowler"
-            },
-            {
-                quote: "First, solve the problem. Then, write the code.",
-                author: "John Johnson"
-            },
-            {
-                quote: "The most disastrous thing that you can ever learn is your first programming language.",
-                author: "Alan Kay"
-            },
-            {
-                quote: "Debugging is twice as hard as writing the code in the first place.",
-                author: "Brian Kernighan"
-            },
-            {
-                quote: "Code never lies, comments sometimes do.",
-                author: "Ron Jeffries"
-            },
-            {
-                quote: "Programs must be written for people to read, and only incidentally for machines to execute.",
-                author: "Harold Abelson"
+            zh: {
+                redirecting: '正在跳转到首页...\n\n（真实情况：服务器又挂了）',
+                stackTrace: `错误：页面走失了 (404)
+    at Router.findRoute (/app/router.js:42:15) 
+    at Server.handleRequest (/app/server.js:128:23)
+    at 某个深夜加班的程序员.写的代码 (/app/server.js:89:12)
+    at 产品经理.提的需求 (events.js:223:5)
+    at 测试.没测到的边界情况 (_http_client.js:456:21)
+    at 运维.重启能解决一切 (_http_common.js:130:17)
+    at 老板.又催进度了 (_http_client.js:362:20)
+    at 程序员.想离职 (events.js:223:5)
+    at 现实.不允许 (_stream_readable.js:309:12)
+    at 生活.继续 (_stream_readable.js:290:11)
+
+💡 程序员小贴士：这个错误的出现说明你访问了一个不存在的页面。
+   建议解决方案：重启试试，不行就重装系统 🤷‍♂️`
             }
-        ];
+        };
+
+        // Auto-detect language based on browser settings
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            return browserLang.startsWith('zh') ? 'zh' : 'en';
+        }
+
+        // Switch language function
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[onclick="switchLanguage('${lang}')"]`).classList.add('active');
+            
+            // Update text content
+            document.querySelectorAll('[data-en][data-zh]').forEach(element => {
+                if (element.classList.contains('title')) {
+                    element.innerHTML = element.getAttribute(`data-${lang}`) + '<span class="terminal-cursor"></span>';
+                } else {
+                    element.textContent = element.getAttribute(`data-${lang}`);
+                }
+            });
+            
+            // Update code snippet
+            const codeEl = document.getElementById('codeSnippet');
+            if (codeEl) {
+                codeEl.textContent = codeSnippets[lang];
+            }
+            
+            // Update document title
+            document.title = lang === 'en' ? '404: Wisdom Not Found' : '404: 智慧未找到';
+            
+            // Update current wisdom quote
+            newWisdom();
+            
+            // Save language preference
+            localStorage.setItem('preferred-language', lang);
+        }
 
         function newWisdom() {
-            const randomWisdom = wisdomQuotes[Math.floor(Math.random() * wisdomQuotes.length)];
+            const quotes = wisdomQuotes[currentLanguage];
+            const randomWisdom = quotes[Math.floor(Math.random() * quotes.length)];
             const quoteEl = document.getElementById('wisdomQuote');
             const authorEl = document.getElementById('wisdomAuthor');
             
@@ -390,22 +581,7 @@
         }
 
         function showStackTrace() {
-            const stackTrace = `
-Error: Page not found (404)
-    at Router.handleRequest (/app/router.js:42:15)
-    at Server.processRequest (/app/server.js:128:23)
-    at IncomingMessage.<anonymous> (/app/server.js:89:12)
-    at IncomingMessage.emit (events.js:223:5)
-    at HTTPParser.parserOnIncomingClient (_http_client.js:456:21)
-    at HTTPParser.parserOnHeadersComplete (_http_common.js:130:17)
-    at Socket.socketOnData (_http_client.js:362:20)
-    at Socket.emit (events.js:223:5)
-    at addChunk (_stream_readable.js:309:12)
-    at readableAddChunk (_stream_readable.js:290:11)
-
-💡 Pro tip: This error occurred because you tried to access a page that doesn't exist.
-   Consider implementing proper route handling and user-friendly redirects!
-            `;
+            const stackTrace = alertMessages[currentLanguage].stackTrace;
             alert(stackTrace);
         }
 
@@ -470,6 +646,11 @@ Error: Page not found (404)
 
         // Initialize effects
         window.addEventListener('load', () => {
+            // Auto-detect and set language
+            const savedLang = localStorage.getItem('preferred-language');
+            const detectedLang = savedLang || detectLanguage();
+            switchLanguage(detectedLang);
+            
             initMatrix();
             setInterval(createFloatingIcon, 3000);
         });
