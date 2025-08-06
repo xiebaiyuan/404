@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404: Wisdom Not Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+            z-index: 10;
+            position: relative;
+        }
+
+        .error-code {
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease-in-out infinite;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        .glitch::before {
+            animation: glitch-1 0.5s infinite linear alternate-reverse;
+            color: #ff6b6b;
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 0.5s infinite linear alternate-reverse;
+            color: #4ecdc4;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-2px); }
+            40% { transform: translateX(-2px); }
+            60% { transform: translateX(2px); }
+            80% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(2px); }
+            40% { transform: translateX(2px); }
+            60% { transform: translateX(-2px); }
+            80% { transform: translateX(-2px); }
+            100% { transform: translateX(0); }
+        }
+
+        .title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #4ecdc4;
+        }
+
+        .wisdom-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .wisdom-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .wisdom-quote {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #e0e0e0;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .wisdom-author {
+            font-size: 0.9rem;
+            color: #96ceb4;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .button-container {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
+        }
+
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-snippet::before {
+            content: 'wisdom.js';
+            position: absolute;
+            top: -1px;
+            left: 15px;
+            background: #4ecdc4;
+            color: #000;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #4ecdc4;
+            animation: blink 1s infinite;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .floating-icons {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .floating-icon {
+            position: absolute;
+            color: rgba(78, 205, 196, 0.3);
+            font-size: 1.5rem;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .wisdom-container {
+                padding: 1.5rem;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix-bg"></canvas>
+    <div class="floating-icons"></div>
+
+    <div class="container">
+        <div class="glitch error-code" data-text="404">404</div>
+        <h1 class="title">Wisdom Not Found<span class="terminal-cursor"></span></h1>
+        
+        <div class="wisdom-container">
+            <div class="wisdom-quote" id="wisdomQuote">
+                "The best error message is the one that never shows up."
+            </div>
+            <div class="wisdom-author" id="wisdomAuthor">
+                — Thomas Fuchs
+            </div>
+        </div>
+
+        <div class="code-snippet">
+<pre><code>function findPage(url) {
+    try {
+        return database.query(url);
+    } catch (PageNotFound) {
+        // TODO: Implement proper 404 handling
+        // "There are two hard things in computer science:
+        //  cache invalidation, naming things, and off-by-one errors."
+        return showWisdom();
+    }
+}</code></pre>
+        </div>
+
+        <div class="button-container">
+            <button class="btn" onclick="newWisdom()">Generate New Wisdom</button>
+            <a href="#" class="btn" onclick="goHome()">Return Home</a>
+            <button class="btn" onclick="showStackTrace()">View Stack Trace</button>
+        </div>
+    </div>
+
+    <script>
+        const wisdomQuotes = [
+            {
+                quote: "The best error message is the one that never shows up.",
+                author: "Thomas Fuchs"
+            },
+            {
+                quote: "Code is like humor. When you have to explain it, it's bad.",
+                author: "Cory House"
+            },
+            {
+                quote: "There are two hard things in computer science: cache invalidation, naming things, and off-by-one errors.",
+                author: "Phil Karlton (extended)"
+            },
+            {
+                quote: "Premature optimization is the root of all evil.",
+                author: "Donald Knuth"
+            },
+            {
+                quote: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+                author: "Martin Fowler"
+            },
+            {
+                quote: "First, solve the problem. Then, write the code.",
+                author: "John Johnson"
+            },
+            {
+                quote: "The most disastrous thing that you can ever learn is your first programming language.",
+                author: "Alan Kay"
+            },
+            {
+                quote: "Debugging is twice as hard as writing the code in the first place.",
+                author: "Brian Kernighan"
+            },
+            {
+                quote: "Code never lies, comments sometimes do.",
+                author: "Ron Jeffries"
+            },
+            {
+                quote: "Programs must be written for people to read, and only incidentally for machines to execute.",
+                author: "Harold Abelson"
+            }
+        ];
+
+        function newWisdom() {
+            const randomWisdom = wisdomQuotes[Math.floor(Math.random() * wisdomQuotes.length)];
+            const quoteEl = document.getElementById('wisdomQuote');
+            const authorEl = document.getElementById('wisdomAuthor');
+            
+            quoteEl.style.opacity = '0';
+            authorEl.style.opacity = '0';
+            
+            setTimeout(() => {
+                quoteEl.textContent = `"${randomWisdom.quote}"`;
+                authorEl.textContent = `— ${randomWisdom.author}`;
+                quoteEl.style.opacity = '1';
+                authorEl.style.opacity = '1';
+            }, 300);
+        }
+
+        function goHome() {
+            // Simulate navigation
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                alert('Redirecting to home page...\n\n(In a real application, this would navigate to your homepage)');
+                
+                document.body.style.opacity = '1';
+            }, 300);
+        }
+
+        function showStackTrace() {
+            const stackTrace = `
+Error: Page not found (404)
+    at Router.handleRequest (/app/router.js:42:15)
+    at Server.processRequest (/app/server.js:128:23)
+    at IncomingMessage.<anonymous> (/app/server.js:89:12)
+    at IncomingMessage.emit (events.js:223:5)
+    at HTTPParser.parserOnIncomingClient (_http_client.js:456:21)
+    at HTTPParser.parserOnHeadersComplete (_http_common.js:130:17)
+    at Socket.socketOnData (_http_client.js:362:20)
+    at Socket.emit (events.js:223:5)
+    at addChunk (_stream_readable.js:309:12)
+    at readableAddChunk (_stream_readable.js:290:11)
+
+💡 Pro tip: This error occurred because you tried to access a page that doesn't exist.
+   Consider implementing proper route handling and user-friendly redirects!
+            `;
+            alert(stackTrace);
+        }
+
+        // Matrix rain effect
+        function initMatrix() {
+            const canvas = document.querySelector('.matrix-bg');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>+-*/%=;:.,!?@#$^&|~`';
+            const charArray = chars.split('');
+            
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(12, 12, 12, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#4ecdc4';
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = charArray[Math.floor(Math.random() * charArray.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 100);
+        }
+
+        // Floating icons
+        function createFloatingIcon() {
+            const icons = ['{}', '[]', '()', '<>', '++', '--', '=>', '==', '!=', '&&', '||', '??'];
+            const container = document.querySelector('.floating-icons');
+            const icon = document.createElement('div');
+            
+            icon.className = 'floating-icon';
+            icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+            icon.style.left = Math.random() * 100 + 'vw';
+            icon.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            icon.style.animationDelay = Math.random() * 5 + 's';
+            
+            container.appendChild(icon);
+            
+            setTimeout(() => {
+                icon.remove();
+            }, 25000);
+        }
+
+        // Initialize effects
+        window.addEventListener('load', () => {
+            initMatrix();
+            setInterval(createFloatingIcon, 3000);
+        });
+
+        window.addEventListener('resize', () => {
+            const canvas = document.querySelector('.matrix-bg');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
